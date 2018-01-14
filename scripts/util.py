@@ -18,8 +18,11 @@ def show_group(group):
     fig.subplots_adjust(wspace=0, hspace=0)
     plt.show()
 
+def get_name(path):
+    return '.'.join(path.split('/')[-1].split('.')[:-1])
+        
 def get_data_path(data_name, camera):
-    assert 1 <= camera <= 6
+    assert 1 <= camera <= Num_cameras
     for name, path in list_dir(Data + data_name + '/', 'mp4', return_name=True):
         if name.startswith('A00%s' % camera):
             return path
@@ -100,9 +103,6 @@ def make_dir(path):
         os.makedirs(path)
     return path
 
-def get_name(path):
-    return '.'.join(path.split('/')[-1].split('.')[:-1])
-        
 def remove(path):
     if not os.path.exists(path):
         return

@@ -1,4 +1,10 @@
-Root = '/mnt/c/Users/zhong/Desktop/bdd/'
+import os
+
+user = os.environ['USER']
+if user == 'zxyan':
+    Root = '/scratch/zxyan/bdd/'
+elif user == 'hoaxingz':
+    Root = '/mnt/c/Users/zhong/Desktop/bdd/'
 Data = Root + 'data/'
 Calibration = Root + 'calibration/'
 Image_height, Image_width = 3000, 4000
