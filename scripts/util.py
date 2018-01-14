@@ -19,11 +19,15 @@ def show_group(group):
     plt.show()
 
 def get_name(path):
-    return '.'.join(path.split('/')[-1].split('.')[:-1])
-        
-def get_data_path(data_name, camera):
+    return os.basename(path)
+
+def get_data_path(data_name, camera, name_is_dir=False):
     assert 1 <= camera <= Num_cameras
-    for name, path in list_dir(Data + data_name + '/', 'mp4', return_name=True):
+    if name_is_dir:
+        dir_ = data_name + '/'
+    else:
+        dir_ = Data + data_name + '/'
+    for name, path in list_dir(dir_, 'mp4', return_name=True):
         if name.startswith('A00%s' % camera):
             return path
     raise RuntimeException('File not found')
