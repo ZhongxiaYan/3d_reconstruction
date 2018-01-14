@@ -1,0 +1,7 @@
+Root = '/mnt/c/Users/zhong/Desktop/bdd/'
+Data = Root + 'data/'
+Calibration = Root + 'calibration/'
+Image_height, Image_width = 3000, 4000
+Video_height, Video_width = 2032, 2704
+Fps = 29.97
+Num_cameras = 6
