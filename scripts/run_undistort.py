@@ -7,7 +7,7 @@ import os, itertools, pickle
 from util import *
 from config import *
 
-series = ('cory_front', 'soda_front', 'lounge', 'cory_breezeway')
+series = ('courtyard', 'pool_room')
 for serie in series:
     processes = []
     s_dir = Data + serie + '/'
