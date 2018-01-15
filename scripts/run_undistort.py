@@ -2,12 +2,12 @@ from __future__ import print_function
 import numpy as np
 import cv2
 
-import os, itertools, pickle
+import os, sys, itertools, pickle
 
 from util import *
 from config import *
 
-series = ('courtyard', 'pool_room')
+series = ['staircase']
 for serie in series:
     processes = []
     s_dir = Data + serie + '/'
@@ -19,7 +19,7 @@ for serie in series:
         make_dir(s_dir + 'calibrated/')
         if os.path.exists(output_file):
             continue
-        cmd = 'python undistort.py %s %s %s' % (input_file, Calibration + str(c) + '/', output_file)
+        cmd = 'python %sundistort.py %s %s %s' % (Scripts, input_file, Calibration + str(c) + '/', output_file)
         processes.append(shell(cmd, wait=False))
     for process in processes:
         out, err = process.communicate()
