@@ -54,7 +54,7 @@ def read_video(video_path, multithreaded=False):
         return imageio.get_reader(video_path)
 
 def write_video(video, output_path):
-    writer = imageio.get_writer(output_path, fps=Fps)
+    writer = imageio.get_writer(output_path, fps=Fps, macro_block_size=None)
     for f in video:
         writer.append_data(f)
     writer.close()
