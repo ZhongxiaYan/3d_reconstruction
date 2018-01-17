@@ -42,9 +42,16 @@ def save_pickle(obj, path):
     
 def is_video(path):
     return path.split('.')[-1].lower() in ['mp4']
-    
-def read_video(video_path):
-    return imageio.get_reader(video_path)
+
+def read_video(video_path, multithreaded=False):
+    if multithreaded:
+        def iterator():
+            fvs = FileVideoStream(get_data_path('pool_room', 1)).start()
+            while fvs.more():
+                yield fvs.read()
+        return iterator
+    else:
+        return imageio.get_reader(video_path)
 
 def write_video(video, output_path):
     writer = imageio.get_writer(output_path, fps=Fps)
@@ -142,3 +149,51 @@ def shell(cmd, wait=True, ignore_error=True):
         print(err.decode('UTF-8'))
         raise RuntimeError('Error in command line call')
     return out.decode('UTF-8'), err.decode('UTF-8') if err else None
+
+from Queue import Queue
+from threading import Thread, Semaphore, Condition
+
+class FileVideoStream:
+    def __init__(self, path, queueSize=128):
+        self.stream = cv2.VideoCapture(path)
+        self.Q = Queue(maxsize=queueSize)
+        self.dequeuer_sema = Semaphore(0)
+        self.enqueuer_cv = Condition()
+        self.stopped = False
+    
+    def start(self):
+        t = Thread(target=self.update, args=())
+        t.daemon = True
+        t.start()
+        return self
+    
+    def update(self):
+        success, frame = self.stream.read()
+
+        num_consecutive_fails = 0
+        while num_consecutive_fails < 3:
+            if success:
+                self.enqueuer_cv.acquire()
+                if self.Q.full():
+                    self.enqueuer_cv.wait()
+                self.enqueuer_cv.release()
+                num_consecutive_fails = 0
+                self.Q.put(frame)
+                self.dequeuer_sema.release()
+            else:
+                num_consecutive_fails += 1
+            
+            success, frame = self.stream.read()
+        self.stopped = True
+        self.dequeuer_sema.release()
+        
+    def read(self):
+        self.enqueuer_cv.acquire()
+        frame = self.Q.get()
+        self.enqueuer_cv.notify()
+        self.enqueuer_cv.release()
+        return frame
+    
+    def more(self):
+        self.dequeuer_sema.acquire()
+        return not self.stopped or self.Q.qsize() > 0
