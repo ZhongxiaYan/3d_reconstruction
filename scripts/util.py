@@ -62,10 +62,17 @@ def write_video(video, output_path):
         writer.append_data(f)
     writer.close()
     
-def video_to_frames(video_path, output_dir, nth=1, return_name=False):
+def video_to_frames(video_path, output_dir, nth=1, return_name=False, start=None, duration=None):
     make_dir(output_dir)
     name = get_name(video_path)
-    cmd = 'ffmpeg -i %s -threads 4 -filter:v "select=not(mod(n\,%s))" %s/%s_%%04d.jpg -frames:v 1 -vsync vfr' % (video_path, nth, output_dir, name)
+    cmd = 'ffmpeg'
+    if start is not None:
+        cmd += ' -ss %s' % start
+    cmd += ' -i %s' % video_path
+    if duration is not None:
+        cmd += ' -t %s' % duration
+    cmd += ' -threads 4 -filter:v "select=not(mod(n\,%s))" %s/%s_%%04d.jpg -frames:v 1 -vsync vfr' % (nth, output_dir, name)
+    print(cmd)
     shell(cmd)
     return list_dir(output_dir, 'jpg', return_name=return_name)
     # video = cv2.VideoCapture(video_path)
