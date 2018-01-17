@@ -7,6 +7,9 @@ import os, itertools, subprocess, pickle
 
 from config import *
 
+# cv2.imread(image_path)
+# cv2.imwrite(image_path, image)
+
 def show_group(group):
     images = [mpimg.imread(file) for file in group]
     fig = plt.figure(figsize=(12, 14))
