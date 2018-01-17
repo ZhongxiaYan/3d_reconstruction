@@ -22,8 +22,6 @@ else:
     
 def undistort_video(video, camera_matrix, distortion_coef, new_camera_matrix, roi):
     for i, frame in enumerate(video):
-        if i % 10 == 0:
-            print('Undistorted %s frames' % i)
 #         x, y, w, h = roi
         yield cv2.undistort(frame, camera_matrix, distortion_coef, None, new_camera_matrix)
     

@@ -19,7 +19,7 @@ def show_group(group):
     plt.show()
 
 def get_name(path):
-    return os.path.basename(path)
+    return os.path.splitext(os.path.basename(path))[0]
 
 def get_data_path(data_name, camera, name_is_dir=False):
     assert 1 <= camera <= Num_cameras
