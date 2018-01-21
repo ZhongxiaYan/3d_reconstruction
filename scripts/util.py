@@ -26,10 +26,9 @@ def get_name(path):
 
 def get_data_path(data_name, camera, name_is_dir=False):
     assert 1 <= camera <= Num_cameras
-    if name_is_dir:
-        dir_ = data_name + '/'
-    else:
-        dir_ = Data + data_name + '/'
+    dir_ = data_name
+    if not name_is_dir:
+        dir_ = os.path.join(Data, data_name)
     for name, path in list_dir(dir_, 'mp4', return_name=True):
         if name.startswith('A00%s' % camera):
             return path
@@ -75,26 +74,6 @@ def video_to_frames(video_path, output_dir, nth=1, return_name=False, start=None
     print(cmd)
     shell(cmd)
     return list_dir(output_dir, 'jpg', return_name=return_name)
-    # video = cv2.VideoCapture(video_path)
-    # success, image = video.read()
-    # frame_paths = []
-    # success = True
-    # make_dir(output_dir)
-    # index = 0
-    # num_fail = 0
-    # while num_fail < 30:
-    #     if success:
-    #         name = get_name(video_path)
-    #         frame_paths.append(output_dir + '%s_%04d.jpg' % (name, index))
-    #         cv2.imwrite(frame_paths[-1], image)
-    #         num_fail = 0
-    #     else:
-    #         num_fail += 1
-    #     index += nth
-    #     if nth > 1:
-    #         video.set(1, index)
-    #     success, image = video.read()
-    # video.release()
 
 def frames_to_video(frame_dir, video_output, frame_prefix=''):
     cmd = 'ffmpeg -r %s -f image2 -s %sx%s -i %s/%s%%*.jpg -threads 4 -vcodec libx264 -crf 25 -pix_fmt yuv420p %s' % (Fps, Video_width, Video_height, frame_dir, frame_prefix, video_output)
@@ -112,12 +91,12 @@ def cut_video(original_file, new_file, start_time, duration):
     '''
     shell('ffmpeg -ss %s -i %s -t %s -vcodec copy -acodec copy %s' % (start_time, original_file, duration, new_file))
 
-def list_dir(dir, ext, return_name=False):
+def list_dir(dir_, ext, return_name=False):
     ext = '.' + ext.lower()
     if return_name:
-        return sorted([(file[:-len(ext)], dir + file) for file in os.listdir(dir) if file[-len(ext):].lower() == ext])
+        return sorted([(file[:-len(ext)], os.path.join(dir_, file)) for file in os.listdir(dir_) if file[-len(ext):].lower() == ext])
     else:
-        return sorted([dir + file for file in os.listdir(dir) if file[-len(ext):].lower() == ext])
+        return sorted([os.path.join(dir_, file) for file in os.listdir(dir_) if file[-len(ext):].lower() == ext])
 
 def make_dir(path):
     if not os.path.exists(path):
