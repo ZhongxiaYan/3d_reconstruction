@@ -1,3 +1,6 @@
 [submodule "OpenSfM"]
 	path = OpenSfM
 	url = https://github.com/ZhongxiaYan/OpenSfM
+[submodule "scripts/util"]
+	path = scripts/util
+	url = git@github.com:ZhongxiaYan/util

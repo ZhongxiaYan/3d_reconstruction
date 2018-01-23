@@ -5,6 +5,7 @@ import cv2, imageio
 
 import os, itertools, subprocess, pickle
 
+from util import *
 from config import *
 
 # cv2.imread(image_path)
@@ -33,14 +34,6 @@ def get_data_path(data_name, camera, name_is_dir=False):
         if name.startswith('A00%s' % camera):
             return path
     raise RuntimeException('File not found')
-    
-def load_pickle(path):
-    with open(path, 'rb') as f:
-        return pickle.load(f)
-
-def save_pickle(obj, path):
-    with open(path, 'wb') as f:
-        pickle.dump(obj, f)
     
 def is_video(path):
     return path.split('.')[-1].lower() in ['mp4']
@@ -90,54 +83,6 @@ def cut_video(original_file, new_file, start_time, duration):
     start_time and duraction in format hh:mm:ss
     '''
     shell('ffmpeg -ss %s -i %s -t %s -vcodec copy -acodec copy %s' % (start_time, original_file, duration, new_file))
-
-def list_dir(dir_, ext, return_name=False):
-    ext = '.' + ext.lower()
-    if return_name:
-        return sorted([(file[:-len(ext)], os.path.join(dir_, file)) for file in os.listdir(dir_) if file[-len(ext):].lower() == ext])
-    else:
-        return sorted([os.path.join(dir_, file) for file in os.listdir(dir_) if file[-len(ext):].lower() == ext])
-
-def make_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    return path
-
-def remove(path):
-    if not os.path.exists(path):
-        return
-    elif os.path.isfile(path):
-        os.remove(path)
-    else:
-        shutil.rmtree(path)
-        
-def extract(input_path, output_path=None):
-    if input_path[-3:] == '.gz':
-        if not output_path:
-            output_path = input_path[:-3]
-        with gzip.open(input_path, 'rb') as f_in:
-            with open(output_path, 'wb') as f_out:
-                f_out.write(f_in.read())
-    else:
-        raise RuntimeError('Don\'t know file extension for ' + input_path)
-
-def get_temp_file(ext, N=10):
-    return Temp + '_temp' + ''.join(random.sample(string.digits, k=N)) + ext
-
-def get_temp_dir(N=10):
-    return get_temp_file('/', N)
-
-def shell(cmd, wait=True, ignore_error=True):
-    if type(cmd) != str:
-        cmd = ' '.join(cmd)
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if not wait:
-        return process
-    out, err = process.communicate()
-    if err and not ignore_error:
-        print(err.decode('UTF-8'))
-        raise RuntimeError('Error in command line call')
-    return out.decode('UTF-8'), err.decode('UTF-8') if err else None
 
 from Queue import Queue
 from threading import Thread, Semaphore, Condition

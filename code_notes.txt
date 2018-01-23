@@ -29,7 +29,7 @@ opensfm
 					feature_min_frames determines when enough pts
 				remove feature points outside of mask
 				normalize points
-					(0, 0) is center of image
+					center of image is (0, 0)
 					coordinates between -0.5 and 0.5
 				points: [(x, y, size, angle)]
 				features: [(length 128 descriptor)]
@@ -322,3 +322,4 @@ sift
 		match keypoints by identifying closest neighbor in feature space
 		if ratio of closest match distance to second closest match distance is > 0.8, then both are rejected
 			eliminates 90% false matches while losing 5% true matches
+
