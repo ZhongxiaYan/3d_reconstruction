@@ -6,6 +6,7 @@ import cv2
 import sys, os
 
 from util import *
+from putil import *
 
 input_path = sys.argv[1]
 camera_dir = sys.argv[2]
