@@ -22,6 +22,28 @@ def show_group(group):
     fig.subplots_adjust(wspace=0, hspace=0)
     plt.show()
 
+def save_calibration(camera_i, camera_matrix, distortion_coefficients, new_camera_matrix):
+    cam_dir = Calibrations + str(camera_i) + '/'
+    np.savetxt(cam_dir + 'camera_matrix.txt', camera_matrix)
+    np.savetxt(cam_dir + 'distortion_coefficients.txt', distortion_coefficients)
+    np.savetxt(cam_dir + 'new_camera_matrix.txt', new_camera_matrix)
+
+def load_calibration(camera_i):
+    cam_dir = Calibrations + str(camera_i) + '/'
+    if not os.path.exists(cam_dir + 'new_camera_matrix.txt'):
+        return None
+    return (
+        np.genfromtxt(cam_dir + 'camera_matrix.txt'),
+        np.genfromtxt(cam_dir + 'distortion_coefficients.txt'),
+        np.genfromtxt(cam_dir + 'new_camera_matrix.txt')
+    )
+
+def load_camera_matrix(camera_i):
+    cam_dir = Calibrations + str(camera_i) + '/'
+    if not os.path.exists(cam_dir + 'new_camera_matrix.txt'):
+        return None
+    return np.genfromtxt(cam_dir + 'new_camera_matrix.txt')
+    
 def get_name(path):
     return os.path.splitext(os.path.basename(path))[0]
 

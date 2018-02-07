@@ -9,24 +9,19 @@ from util import *
 from putil import *
 
 input_path = sys.argv[1]
-camera_dir = sys.argv[2]
+camera_i = int(sys.argv[2])
 output_path = sys.argv[3]
 
-camera_matrix = np.load(os.path.join(camera_dir, 'camera_matrix.npy'))
-distortion_coef = np.load(os.path.join(camera_dir, 'distortion_coefficients.npy'))
-new_camera_matrix, roi = cv2.getOptimalNewCameraMatrix(camera_matrix, distortion_coef, (Video_width, Video_height), 0)
+assert(camera_num in Cam_ids)
+
+camera_matrix, distortion_coef, new_camera_matrix = load_calibration(camera_i)
 
 if is_video(input_path):
     video = read_video(input_path)
 else:
     video = [cv2.imread(input_path)]
-    
-def undistort_video(video, camera_matrix, distortion_coef, new_camera_matrix, roi):
-    for i, frame in enumerate(video):
-#         x, y, w, h = roi
-        yield cv2.undistort(frame, camera_matrix, distortion_coef, None, new_camera_matrix)
-    
-output_video = undistort_video(video, camera_matrix, distortion_coef, new_camera_matrix, roi)
+
+output_video = (cv2.undistort(frame, camera_matrix, distortion_coef, None, new_camera_matrix) for frame in video)
 
 if is_video(output_path):
     write_video(output_video, output_path)
