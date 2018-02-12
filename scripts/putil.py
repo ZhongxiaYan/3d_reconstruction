@@ -22,11 +22,13 @@ def show_group(group):
     fig.subplots_adjust(wspace=0, hspace=0)
     plt.show()
 
-def save_calibration(camera_i, camera_matrix, distortion_coefficients, new_camera_matrix):
+def save_calibration(camera_i, camera_matrix, distortion_coefficients, new_camera_matrix, rt_vecs=None):
     cam_dir = Calibrations + str(camera_i) + '/'
     np.savetxt(cam_dir + 'camera_matrix.txt', camera_matrix)
     np.savetxt(cam_dir + 'distortion_coefficients.txt', distortion_coefficients)
     np.savetxt(cam_dir + 'new_camera_matrix.txt', new_camera_matrix)
+    if rt_vecs:
+        save_pickle(rt_vecs, cam_dir + 'rt_vecs.p')
 
 def load_calibration(camera_i):
     cam_dir = Calibrations + str(camera_i) + '/'
@@ -43,10 +45,10 @@ def load_camera_matrix(camera_i):
     if not os.path.exists(cam_dir + 'new_camera_matrix.txt'):
         return None
     return np.genfromtxt(cam_dir + 'new_camera_matrix.txt')
-    
-def get_name(path):
-    return os.path.splitext(os.path.basename(path))[0]
 
+def load_rt_vecs(camera_i):
+    return load_pickle(Calibrations + str(camera_i) + '/rt_vecs.p')
+    
 def get_data_path(data_name, camera, name_is_dir=False):
     assert 1 <= camera <= Num_cameras
     dir_ = data_name
@@ -78,7 +80,7 @@ def write_video(video, output_path):
     
 def video_to_frames(video_path, output_dir, nth=1, return_name=False, start=None, duration=None):
     make_dir(output_dir)
-    name = get_name(video_path)
+    name = get_name(video_path, ext=False)
     cmd = 'ffmpeg'
     if start is not None:
         cmd += ' -ss %s' % start

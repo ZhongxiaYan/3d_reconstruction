@@ -12,7 +12,7 @@ input_path = sys.argv[1]
 camera_i = int(sys.argv[2])
 output_path = sys.argv[3]
 
-assert(camera_num in Cam_ids)
+assert(camera_i in Cam_ids)
 
 camera_matrix, distortion_coef, new_camera_matrix = load_calibration(camera_i)
 
