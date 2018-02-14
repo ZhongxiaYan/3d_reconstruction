@@ -1,0 +1,1 @@
+rsync -avzChP --include="*/" --include="merged.ply" --include "reconstruction.json" --include "camera_models*.json" --include "images/*" --include "plot_depthmaps/*.png" --include "plot_inliers/*.jpg" --exclude "*" --prune-empty-dirs -e "ssh -i $oldhome/.ssh/id_rsa -F $oldhome/.ssh/config" yosef:/scratch/zxyan/bdd/reconstructions/ /mnt/c/Users/zhong/Desktop/bdd/reconstructions/
